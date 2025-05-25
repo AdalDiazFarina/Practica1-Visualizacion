@@ -3,16 +3,17 @@ import * as d3 from "d3"
 import { typeColors } from "@/interfaces/type-colors.type"
 import { typeEmojis } from "@/interfaces/type-emojis.type"
 import { scatterChartData } from "@/data/scatterChartData"
+import type { ScatterChartData } from "@/interfaces/scatter-chart-data.interface"
 
 type ScatterChartProps = {
   onHover?: (
-    data: { tipo: string; cantidad: number },
+    data: ScatterChartData,
     position: { x: number; y: number }
   ) => void
   onLeave?: () => void
 }
 
-export function ScatterChart() {
+export function ScatterChart({ onHover, onLeave }: ScatterChartProps) {
   const svgRef = useRef<SVGSVGElement | null>(null)
 
   useEffect(() => {
@@ -92,29 +93,35 @@ export function ScatterChart() {
     chart.append("g")
       .call(d3.axisLeft(y))
 
-    // Dibujar las barras
+    // Dibujar los puntos
     const points = chart.selectAll("circle")
       .data(scatterChartData)
       .enter()
       .append("circle")
       .attr("cx", d => x(d.defense))
       .attr("cy", d => y(d.attack))
-      .attr("r", 5)
-      .attr("fill", d => typeColors[d.type] || "#888")
-      .attr("opacity", 0.7)
-      .attr("stroke", "#000")
-      .attr("stroke-width", 0.3)
-      .attr("cursor", "pointer")
+      .attr("r", 0)
+      .attr("fill", d => typeColors[d.type])
+      .style("cursor", "pointer")
+      .attr("opacity", 0);
 
-    //   // Al hacerle hover sobre la barra se utiliza el onHover para asignar los valores del tooltip
-    //   .on("mousemove", function (
-    //     this: SVGRectElement,
-    //     event: MouseEvent,
-    //     d: { tipo: string; cantidad: number }
-    //   ) {
-    //     onHover?.(d, { x: event.clientX + 10, y: event.clientY - 20 })
-    //   })
-  }, [])
+    points
+      .transition()
+      .duration(800)
+      .delay((_d, i) => i * 2)
+      .attr("r", 5)
+      .attr("opacity", 0.8);
+
+    points
+      // Al hacerle hover sobre la barra se utiliza el onHover para asignar los valores del tooltip
+      .on("mousemove", function (
+        this: SVGCircleElement,
+        event: MouseEvent,
+        d: { name: string; type: string; all_types: string[]; attack: number; defense: number; }
+      ) {
+        onHover?.(d, { x: event.clientX + 10, y: event.clientY - 20 })
+      })
+  }, [onHover, onLeave])
 
   return <svg ref={svgRef} className="w-full h-full"></svg>
 }

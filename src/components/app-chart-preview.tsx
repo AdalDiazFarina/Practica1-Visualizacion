@@ -7,18 +7,26 @@ import { BarChart } from './charts/BarChart';
 import { useState, useCallback } from 'react';
 import { typeEmojis } from '@/interfaces/type-emojis.type';
 import { ScatterChart } from './charts/ScatterChart';
+import type { ScatterChartData } from '@/interfaces/scatter-chart-data.interface';
 
 const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
-  const [tooltipData, setTooltipData] = useState<{ tipo: string; cantidad: number } | null>(null);
+  const [tooltipBarData, setTooltipBarData] = useState<{ tipo: string; cantidad: number } | null>(null);
+  const [tooltipScatterData, setTooltipScatterData] = useState<ScatterChartData | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const handleHover = useCallback((data: { tipo: string; cantidad: number }, position: { x: number; y: number }) => {
-    setTooltipData(data);
+    setTooltipBarData(data);
+    setTooltipPosition(position);
+  }, []);
+
+  const handleHoverScatter = useCallback((data: ScatterChartData, position: { x: number; y: number }) => {
+    setTooltipScatterData(data);
     setTooltipPosition(position);
   }, []);
 
   const handleLeave = useCallback(() => {
-    setTooltipData(null);
+    setTooltipBarData(null);
+    setTooltipScatterData(null);
   }, []);
 
   return (
@@ -31,11 +39,14 @@ const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
               onLeave={handleLeave}
             />
           )}
-          {chartType === "scatter" && <ScatterChart />}
-
-
-          {/* Tooltip rendering */}
-          {tooltipData && (
+          {chartType === "scatter" && (
+            <ScatterChart
+              onHover={handleHoverScatter}
+              onLeave={handleLeave}
+            />
+          )}
+          {/* Tooltip BarChart rendering */}
+          {tooltipBarData && (
             <div
               className="absolute bg-white border rounded shadow px-2 py-1 text-xs pointer-events-none"
               style={{
@@ -44,8 +55,27 @@ const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
                 zIndex: 50,
               }}
             >
-              <div>Tipo: {typeEmojis[tooltipData.tipo]} {tooltipData.tipo}</div>
-              <div>Cantidad: {tooltipData.cantidad}</div>
+              <div>Tipo: {typeEmojis[tooltipBarData.tipo]} {tooltipBarData.tipo}</div>
+              <div>Cantidad: {tooltipBarData.cantidad}</div>
+            </div>
+          )}
+
+          {/* Tooltip BarChart rendering */}
+          {tooltipScatterData && (
+            <div
+              className="absolute bg-white border rounded shadow px-2 py-1 text-xs pointer-events-none"
+              style={{
+                left: tooltipPosition.x,
+                top: tooltipPosition.y,
+                zIndex: 50,
+              }}
+            >
+              <div className="font-bold mb-1">{tooltipScatterData.name}</div>
+              <div>
+                Tipo: {typeEmojis[tooltipScatterData.type] || ""} {tooltipScatterData.type}
+              </div>
+              <div>Ataque: {tooltipScatterData.attack}</div>
+              <div>Defensa: {tooltipScatterData.defense}</div>
             </div>
           )}
         </CardContent>

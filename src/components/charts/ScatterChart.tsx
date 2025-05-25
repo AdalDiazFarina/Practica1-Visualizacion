@@ -113,13 +113,15 @@ export function ScatterChart({ onHover, onLeave }: ScatterChartProps) {
       .attr("opacity", 0.8);
 
     points
-      // Al hacerle hover sobre la barra se utiliza el onHover para asignar los valores del tooltip
       .on("mousemove", function (
         this: SVGCircleElement,
         event: MouseEvent,
-        d: { name: string; type: string; all_types: string[]; attack: number; defense: number; }
+        d: ScatterChartData
       ) {
         onHover?.(d, { x: event.clientX + 10, y: event.clientY - 20 })
+      })
+      .on("mouseleave", function (this: SVGCircleElement, _event: MouseEvent) {
+        onLeave?.()
       })
   }, [onHover, onLeave])
 

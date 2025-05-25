@@ -8,13 +8,14 @@ import { useState, useCallback } from 'react';
 import { typeEmojis } from '@/interfaces/type-emojis.type';
 import { ScatterChart } from './charts/ScatterChart';
 import type { ScatterChartData } from '@/interfaces/scatter-chart-data.interface';
+import type { BarchartData } from '@/interfaces/barchart-data.interface';
 
 const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
-  const [tooltipBarData, setTooltipBarData] = useState<{ tipo: string; cantidad: number } | null>(null);
+  const [tooltipBarData, setTooltipBarData] = useState<BarchartData | null>(null);
   const [tooltipScatterData, setTooltipScatterData] = useState<ScatterChartData | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  const handleHover = useCallback((data: { tipo: string; cantidad: number }, position: { x: number; y: number }) => {
+  const handleHover = useCallback((data: BarchartData, position: { x: number; y: number }) => {
     setTooltipBarData(data);
     setTooltipPosition(position);
   }, []);
@@ -70,6 +71,11 @@ const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
                 zIndex: 50,
               }}
             >
+              <img
+                src={tooltipScatterData.image}
+                alt={tooltipScatterData.name}
+                className="w-12 h-12"
+              />
               <div className="font-bold mb-1">{tooltipScatterData.name}</div>
               <div>
                 Tipo: {typeEmojis[tooltipScatterData.type] || ""} {tooltipScatterData.type}

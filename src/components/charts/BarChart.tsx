@@ -3,10 +3,11 @@ import * as d3 from "d3"
 import { barChartData } from "@/data/barChartData"
 import { typeColors } from "@/interfaces/type-colors.type"
 import { typeEmojis } from "@/interfaces/type-emojis.type"
+import type { BarchartData } from "@/interfaces/barchart-data.interface"
 
 type BarChartProps = {
   onHover?: (
-    data: { tipo: string; cantidad: number },
+    data: BarchartData,
     position: { x: number; y: number }
   ) => void
   onLeave?: () => void
@@ -115,7 +116,7 @@ export function BarChart({ onHover, onLeave }: BarChartProps) {
     // con la escala, la escala se calcula en base al origen por lo tanto se desplaza la barra al aumentar su tamaño.
     // Por esa razón se calcula el nuevo ancho y se ajusta la posición X de la barra para que se mantenga centrada.
     bars
-      .on("mouseover", function (this: SVGRectElement, event: MouseEvent, d: { tipo: string; cantidad: number }) {
+      .on("mouseover", function (this: SVGRectElement, event: MouseEvent) {
         const currentX = parseFloat(d3.select(this).attr("x"))
         const currentWidth = parseFloat(d3.select(this).attr("width"))
         const zoomFactor = 1.1
@@ -131,7 +132,7 @@ export function BarChart({ onHover, onLeave }: BarChartProps) {
           .attr("stroke-width", 2)
           .attr("cursor", "pointer")
       })
-      .on("mouseleave", function (this: SVGRectElement, _event: MouseEvent, d: { tipo: string; cantidad: number }) {
+      .on("mouseleave", function (this: SVGRectElement, _event: MouseEvent, d: BarchartData) {
         const originalX = x(d.tipo)!
         const originalWidth = x.bandwidth()
 
@@ -150,7 +151,7 @@ export function BarChart({ onHover, onLeave }: BarChartProps) {
       .on("mousemove", function (
         this: SVGRectElement,
         event: MouseEvent,
-        d: { tipo: string; cantidad: number }
+        d: BarchartData
       ) {
         onHover?.(d, { x: event.clientX + 10, y: event.clientY - 20 })
       })

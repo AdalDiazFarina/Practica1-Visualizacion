@@ -4,4 +4,5 @@ export interface ScatterChartData {
   all_types: string[];
   attack: number;
   defense: number;
+  image: string;
 }

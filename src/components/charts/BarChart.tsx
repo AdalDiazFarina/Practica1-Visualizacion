@@ -22,13 +22,13 @@ export function BarChart({ onHover, onLeave }: BarChartProps) {
 
     const svgWidth = svgRef.current.clientWidth
     const svgHeight = svgRef.current.clientHeight
-    const margin = { top: 30, right: 40, bottom: 50, left: 60 }
+    const margin = { top: 20, right: 40, bottom: 70, left: 60 }
     const width = svgWidth - margin.left - margin.right
     const height = svgHeight - margin.top - margin.bottom
 
     // Crear el canvas SVG
     const svg = d3.select(svgRef.current)
-    svg.html("")
+    svg.selectAll("*").remove()
 
     const chart = svg.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
@@ -58,6 +58,25 @@ export function BarChart({ onHover, onLeave }: BarChartProps) {
       .attr("text-anchor", "middle")
       .attr("class", "text-sm text-gray-500")
       .text("Datos del Pokédex: cantidad total por tipo primario")
+
+    chart.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 10)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .style("font-weight", "bold")
+      .style("fill", "#444")
+      .text("Tipos de Pokémon");
+
+    chart.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2 - margin.top)
+      .attr("y", -35)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .style("font-weight", "bold")
+      .style("fill", "#444")
+      .text("Cantidad de Pokémon")
 
     // Añadir los ejes
     // Dibuja el texto de los ejes
@@ -137,5 +156,5 @@ export function BarChart({ onHover, onLeave }: BarChartProps) {
       })
   }, [onHover, onLeave])
 
-  return <svg ref={svgRef} className="w-full h-[450px]"></svg>
+  return <svg ref={svgRef} className="w-full h-full"></svg>
 }

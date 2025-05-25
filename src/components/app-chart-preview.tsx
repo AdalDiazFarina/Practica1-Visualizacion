@@ -6,6 +6,7 @@ import {
 import { BarChart } from './charts/BarChart';
 import { useState, useCallback } from 'react';
 import { typeEmojis } from '@/interfaces/type-emojis.type';
+import { ScatterChart } from './charts/ScatterChart';
 
 const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
   const [tooltipData, setTooltipData] = useState<{ tipo: string; cantidad: number } | null>(null);
@@ -30,7 +31,9 @@ const AppChartPreview = ({ chartType }: { chartType: ChartType }) => {
               onLeave={handleLeave}
             />
           )}
-          {chartType === "scatter" && <p>ScatterChart</p>}
+          {chartType === "scatter" && <ScatterChart />}
+
+
           {/* Tooltip rendering */}
           {tooltipData && (
             <div
